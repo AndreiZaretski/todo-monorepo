@@ -12,8 +12,11 @@
   ],
   "scripts": {
     "prisma": "npx prisma",
-    "prisma:generate": "npx prisma generate",
-    "prisma:migrate": "npx prisma migrate dev"
+    "prisma:generate": "yarn workspace db prisma generate",
+    "prisma:migrate": "yarn workspace db prisma migrate dev",
+    "dev:api": "yarn workspace api start:dev",
+    "dev:web": "yarn workspace web dev",
+    "dev": "concurrently \"yarn dev:api\" \"yarn dev:web\""
   },
   "prisma": {
     "schema": "packages/db/prisma/schema.prisma"
@@ -22,13 +25,7 @@
     "@types/node": "^25.6.0",
     "dotenv": "^17.4.2",
     "eslint": "10.2.1",
-    "prettier": "3.8.3",
-    "prisma": "^7.8.0",
-    "ts-node": "^10.9.2",
-    "ts-node-dev": "2.0.0",
-    "typescript": "6.0.3"
+    "prettier": "3.8.3"
   },
-  "dependencies": {
-    "@prisma/client": "^7.8.0"
-  }
+  "dependencies": {}
 }

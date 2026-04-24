@@ -1,6 +1,18 @@
 {
   "name": "db",
   "version": "1.0.0",
-  "main": "index.js",
-  "license": "MIT"
+  "private": true,
+  "dependencies": {
+    "@prisma/adapter-better-sqlite3": "^7.8.0",
+    "@prisma/client": "7.8.0"
+  },
+  "devDependencies": {
+    "prisma": "7.8.0"
+  },
+  "exports": {
+    ".": {
+      "types": "./generated/prisma/client.js",
+      "default": "./generated/prisma/client.js"
+    }
+  }
 }

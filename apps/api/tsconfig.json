@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "extends": "../../packages/config/tsconfig.base.json",
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "resolvePackageJsonExports": true,
@@ -21,8 +20,6 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false,
-    "ignoreDeprecations": "6.0",
-    "types": ["node"],
+    "noFallthroughCasesInSwitch": false
   }
 }

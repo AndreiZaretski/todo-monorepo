@@ -1,6 +1,6 @@
 {
+  "extends": "../../packages/config/tsconfig.base.json",
   "compilerOptions": {
-    "extends": "../../packages/config/tsconfig.base.json",
     "target": "ES2017",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
