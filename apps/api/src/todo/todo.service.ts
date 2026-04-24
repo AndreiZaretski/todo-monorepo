@@ -1,8 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { Prisma } from 'db';
+import { TRPCError } from '@trpc/server';
 
 @Injectable()
 export class TodoService {
@@ -21,9 +22,11 @@ export class TodoService {
         error instanceof Prisma.PrismaClientKnownRequestError &&
         error.code === 'P2002'
       ) {
-        throw new BadRequestException(
-          `Todo "${dto.text}" already exists for this user`,
-        );
+        // throw new BadRequestException(`Задача "${dto.text}" ужесуществует `);
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: `Задача "${dto.text}" уже существует`,
+        });
       }
       throw error;
     }
@@ -47,9 +50,11 @@ export class TodoService {
         error instanceof Prisma.PrismaClientKnownRequestError &&
         error.code === 'P2002'
       ) {
-        throw new BadRequestException(
-          `Todo "${dto.text}" already exists for this user`,
-        );
+        // throw new BadRequestException(`Задача "${dto.text}" уже существует`);
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: `Задача "${dto.text}" уже существует`,
+        });
       }
       throw error;
     }
@@ -65,7 +70,11 @@ export class TodoService {
         error instanceof Prisma.PrismaClientKnownRequestError &&
         error.code === 'P2025'
       ) {
-        throw new BadRequestException(`Todo with id ${id} not found`);
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: `Задача с id ${id} не найдено`,
+        });
+        // throw new BadRequestException(`Задание с id ${id} не найдено`);
       }
       throw error;
     }

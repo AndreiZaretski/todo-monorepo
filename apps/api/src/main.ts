@@ -9,6 +9,11 @@ import { TodoService } from './todo/todo.service';
 import { AuthService } from './auth/auth.service';
 import { appRouter } from './trpc/routers/_app';
 import { createContext } from './trpc/context';
+import cookieParser from 'cookie-parser';
+import dotenv from 'dotenv';
+import path from 'path';
+
+dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -25,6 +30,13 @@ async function bootstrap() {
   const todoService = app.get(TodoService);
   const authService = app.get(AuthService);
 
+  app.use(cookieParser());
+
+  app.enableCors({
+    origin: ['http://localhost:3000'],
+    credentials: true,
+  });
+
   app.use(
     '/trpc',
     trpcExpress.createExpressMiddleware({
@@ -36,7 +48,6 @@ async function bootstrap() {
           prisma,
           todoService,
           authService,
-          userId: req.user?.id ?? null,
         }),
     }),
   );
@@ -45,11 +56,15 @@ async function bootstrap() {
     .setTitle('Todo API')
     .setDescription('API documentation for Todo App')
     .setVersion('1.0')
-    .addBearerAuth()
+    .addCookieAuth('token')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('swagger', app, document);
+  SwaggerModule.setup('swagger', app, document, {
+    swaggerOptions: {
+      withCredentials: true,
+    },
+  });
   await app.listen(process.env.PORT ?? 4001);
   console.log('port listen ', process.env.PORT);
 }
