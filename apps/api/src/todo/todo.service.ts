@@ -33,7 +33,7 @@ export class TodoService {
   }
 
   async findAll(userId: number) {
-    return this.prisma.todo.findMany({
+    return await this.prisma.todo.findMany({
       where: { userId },
       orderBy: { id: 'desc' },
     });

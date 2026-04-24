@@ -6,7 +6,7 @@ import { trpc } from '@/app/lib/trpc';
 import { z } from 'zod';
 
 const schema = z.object({
-  email: z.string().email('Некорректный email'),
+  email: z.email('Некорректный email'),
   password: z.string().min(5, 'Минимум 5 символов'),
 });
 
@@ -30,11 +30,11 @@ export default function LoginPage() {
     const parsed = schema.safeParse({ email, password });
 
     if (!parsed.success) {
-  const firstError = parsed.error.issues[0]?.message 
-  ?? 'Ошибка валидации';
-  setFormError(firstError);
-  return;
-   }
+      const firstError = parsed.error.issues[0]?.message 
+      ?? 'Ошибка валидации';
+      setFormError(firstError);
+      return;
+    }
 
 
     try {
@@ -49,8 +49,12 @@ export default function LoginPage() {
         setSuccessMessage('Вы успешно зарегистрированы! Теперь войдите.');
         setMode('login');
       }
-    } catch (err: any) {
-      setFormError(err.message ?? 'Ошибка');
+    } catch (err) {
+      const message =
+      err instanceof Error
+        ? err.message
+        : 'Ошибка';
+      setFormError(message);
     }
   };
 

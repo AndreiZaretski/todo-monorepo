@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { trpc } from '@/app/lib/trpc';
 import { useRouter } from 'next/navigation';
+import { TRPCClientError } from '@trpc/client';
 
 export default function TodoPage() {
   const router = useRouter();
@@ -17,16 +18,26 @@ export default function TodoPage() {
   const [success, setSuccess] = useState('');
 
   useEffect(() => {
+    if (
+      listQuery.error &&
+      listQuery.error.data?.code === 'UNAUTHORIZED'
+    ) {
+      logoutMutation.mutate(undefined, {
+        onSettled: () => router.push('/login'),
+      });
+    }
+  }, [listQuery.error]);
+
+  useEffect(() => {
     if (error || success) {
       const t = setTimeout(() => {
         setError('');
         setSuccess('');
-      }, 2000);
+      }, 5000);
 
       return () => clearTimeout(t);
     }
   }, [error, success]);
-
 
   const handleAdd = async () => {
     setError('');
@@ -42,8 +53,17 @@ export default function TodoPage() {
       setText('');
       setSuccess('Задача добавлена');
       listQuery.refetch();
-    } catch (err: any) {
-      setError(err.message ?? 'Ошибка');
+    } catch (err) {
+      if (err instanceof TRPCClientError && err.data?.code === 'UNAUTHORIZED') {
+        await logoutMutation.mutateAsync();
+        router.push('/login');
+        return;
+      }
+      const message =
+      err instanceof Error
+        ? err.message
+        : 'Ошибка';
+      setError(message);
     }
   };
 
@@ -55,14 +75,25 @@ export default function TodoPage() {
       await deleteMutation.mutateAsync({ id });
       setSuccess('Задача удалена');
       listQuery.refetch();
-    } catch (err: any) {
-      setError(err.message ?? 'Ошибка');
+    } catch (err) {
+      if (err instanceof TRPCClientError && err.data?.code === 'UNAUTHORIZED') {
+        await logoutMutation.mutateAsync();
+        router.push('/login');
+        return;
+      }
+
+      const message =
+      err instanceof Error
+        ? err.message
+        : 'Ошибка';
+      setError(message);
+
     }
   };
 
   const handleLogout = async () => {
     await logoutMutation.mutateAsync();
-    router.push('/login'); // middleware поймает отсутствие cookie
+    router.push('/login');
   };
 
   return (

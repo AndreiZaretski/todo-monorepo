@@ -6,6 +6,17 @@ const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
   // Override default ignores of eslint-config-next.
+  
+  {
+    files: ["**/*.tsx"],
+    languageOptions: {
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+    },
+  },
   globalIgnores([
     // Default ignores of eslint-config-next:
     ".next/**",
