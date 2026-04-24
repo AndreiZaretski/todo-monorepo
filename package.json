@@ -1,0 +1,32 @@
+{
+  "name": "todo-monorepo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/AndreiZaretski/todo-monorepo.git",
+  "author": "AndreiZaretski <105275676+AndreiZaretski@users.noreply.github.com>",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "prisma": "npx prisma",
+    "prisma:generate": "yarn workspace db prisma generate",
+    "prisma:migrate": "yarn workspace db prisma migrate dev",
+    "dev:api": "yarn workspace api start:dev",
+    "dev:web": "yarn workspace web dev",
+    "dev": "concurrently \"yarn dev:api\" \"yarn dev:web\""
+  },
+  "prisma": {
+    "schema": "packages/db/prisma/schema.prisma"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "concurrently": "^9.2.1",
+    "dotenv": "^17.4.2",
+    "eslint": "10.2.1",
+    "prettier": "3.8.3"
+  },
+  "dependencies": {}
+}
